@@ -7,9 +7,14 @@ namespace JornadaMilhas.Test.Integracao
     public class ContextoFixtureDocker
     {
         public JornadaMilhasContext Context { get; private set; }
-        private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder()
-            .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
-            .Build();
+        private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder().WithImage("mcr.microsoft.com/mssql/server:2022-latest").Build();
+
+        public async Task LimpaDadosDoBanco()
+        {
+            Context.OfertasViagem.RemoveRange(Context.OfertasViagem);
+            Context.Rotas.RemoveRange(Context.Rotas);
+            await Context.SaveChangesAsync();
+        }
 
         public async Task InitializeAsync()
         {
@@ -27,5 +32,6 @@ namespace JornadaMilhas.Test.Integracao
         {
             await _msSqlContainer.StopAsync();
         }
+
     }
 }
